@@ -1,0 +1,137 @@
+Artillery (makes 1000 requests per second) -> make query requests -> Video Streaming Server
+
+// YML file for Artillery
+
+config:
+  target: 'http://127.0.0.1:3000/youtube'
+  phases:
+    - duration: 10
+      arrivalRate: 1000
+  defaults:
+    headers:
+      x-my-service-auth: '987401838271002188298567'
+scenarios:
+  - flow:
+    - get:
+        url: '/videos'
+        
+
+// 1. Artillery output for 100 requests per second for 10 seconds.  
+// Median response time per request is 1.4 ms.
+// Requested query is for randomly selected indexed id value
+
+Summary report @ 11:42:32(-0800) 2018-02-07
+  Scenarios launched:  1000
+  Scenarios completed: 1000
+  Requests completed:  1000
+  RPS sent: 95.33
+  Request latency:
+    min: 1
+    max: 18.8
+    median: 1.4
+    p95: 2.7
+    p99: 4.1
+  Scenario duration:
+    min: 1.6
+    max: 33.1
+    median: 2.2
+    p95: 4.1
+    p99: 5.3
+  Scenario counts:
+    0: 1000 (100%)
+  Codes:
+    200: 1000
+    
+    
+// 2. Artillery output for 1000 requests per second for 10 seconds.  
+// Median response time per request is 6819 ms.
+// Requested query is for randomly selected indexed id value
+
+All virtual users finished
+Summary report @ 11:41:29(-0800) 2018-02-07
+  Scenarios launched:  10000
+  Scenarios completed: 9303
+  Requests completed:  9303
+  RPS sent: 519.48
+  Request latency:
+    min: 6.6
+    max: 8880.7
+    median: 6819.6
+    p95: 8833.7
+    p99: 8867.5
+  Scenario duration:
+    min: 11.8
+    max: 8882.3
+    median: 6821.9
+    p95: 8835.7
+    p99: 8869
+  Scenario counts:
+    0: 10000 (100%)
+  Codes:
+    200: 9303
+  Errors:
+    EADDRNOTAVAIL: 167
+    ENFILE: 336
+    ECONNRESET: 194
+    
+// Server makes request for database row with randomly selected video id
+
+videos: {
+   get: function (callback) {
+    let index = Math.floor( Math.random() * 10000000 ) + 1;
+    var queryStr = 'SELECT * from video where id=' + index;
+    db.query(queryStr, function(err, results) {
+      // console.log('DB result:', results);
+      callback(err, results);
+    });
+  },
+}
+
+
+// 3. Artillery output for 1000 requests per second for 10 seconds.  
+// Median response time per request is 62152 ms.
+// Requested column is non-indexed.
+
+All virtual users finished
+Summary report @ 11:34:33(-0800) 2018-02-07
+  Scenarios launched:  10000
+  Scenarios completed: 19
+  Requests completed:  19
+  RPS sent: 79.08
+  Request latency:
+    min: 6341.7
+    max: 115304.9
+    median: 62150.9
+    p95: 112756.8
+    p99: NaN
+  Scenario duration:
+    min: 6398.2
+    max: 115307.3
+    median: 62152
+    p95: 112758.9
+    p99: NaN
+  Scenario counts:
+    0: 10000 (100%)
+  Codes:
+    200: 19
+  Errors:
+    ENFILE: 5432
+    ESOCKETTIMEDOUT: 3937
+    ECONNRESET: 612
+
+
+// Server makes request for database row with non-indexed column value
+
+videos: {
+   get: function (callback) {
+    var queryStr = 'SELECT * from video where publisher_id = "ciuqQWA"';
+    db.query(queryStr, function(err, results) {
+      // console.log('DB result:', results);
+      callback(err, results);
+    });
+  },
+}
+
+
+    
+    
