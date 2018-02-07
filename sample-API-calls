@@ -14,7 +14,23 @@ scenarios:
   - flow:
     - get:
         url: '/videos'
-        
+
+// Sample response from MySQL:
+
+  RowDataPacket {
+    id: 3545017,
+    title: 'veritatis aliquid neque',
+    description: 'Expedita pariatur molestiae officiis perferendis quaerat incidunt animi vero blanditiis.',
+    ad: 0,
+    channel_id: 'buW9o0E',
+    publisher_id: 'kZNguj2',
+    created_at: 'Mon Feb 05 2018 15:52:11 GMT-0800 (PST)',
+    updated_at: 'Mon Feb 05 2018 15:52:11 GMT-0800 (PST)',
+    video_url_1: 'http://lorempixel.com/640/480/technics',
+    video_url_2: 'http://lorempixel.com/640/480/transport',
+    length_in_secs: 12563 } ]
+    
+    
 
 // 1. Artillery output for 100 requests per second for 10 seconds.  
 // Median response time per request is 1.4 ms.
